@@ -1,5 +1,5 @@
 
-# Getting Started with Notion
+# Getting Started with notion
 
 ## Introduction
 
