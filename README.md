@@ -1,171 +1,126 @@
+# Notion API SDK
 
-# Getting Started with notion
+[![Built with APIMatic][apimatic-badge]][apimatic-url] [![License: MIT][license-badge]][license-url] [![Python 3.10+][python-badge]][python-url]
 
-## Introduction
+The Notion API SDK for Python provides access to the Notion API REST APIs from Python applications.
+
+> [!TIP]
+> **Looking for a specific signature, model, enum, or error type?** This SDK ships a generated
+> **[SDK map](sdk-map.md)** -- a lookup index of the SDK's entire Python surface. Consult it before
+> scanning the source tree; details under [SDK map](#sdk-map).
 
 The Notion API allows developers to integrate with Notion workspaces programmatically. Build integrations that connect Notion with other tools, automate workflows, and manage workspace content including pages, databases, blocks, users, comments, and search. Notion is an all-in-one workspace that combines notes, tasks, wikis, and databases into a flexible, collaborative platform.
 
-## Building
-
-You must have Python `3.7+` installed on your system to install and run this SDK. This SDK package depends on other Python packages like pytest, etc. These dependencies are defined in the `requirements.txt` file that comes with the SDK. To resolve these dependencies, you can use the PIP Dependency manager. Install it by following steps at [https://pip.pypa.io/en/stable/installing/](https://pip.pypa.io/en/stable/installing/).
-
-Python and PIP executables should be defined in your PATH. Open command prompt and type `pip --version`. This should display the version of the PIP Dependency Manager installed if your installation was successful and the paths are properly defined.
-
-* Using command line, navigate to the directory containing the generated files (including `requirements.txt`) for the SDK.
-* Run the command `pip install -r requirements.txt`. This should install all the required dependencies.
-
-![Building SDK - Step 1](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&step=installDependencies)
+---
 
 ## Installation
 
-The following section explains how to use the notion library in a new project.
+Install the Python SDK from PyPI, with whichever package manager your project uses:
 
-### 1. Open Project in an IDE
-
-Open up a Python IDE like PyCharm. The basic workflow presented here is also applicable if you prefer using a different editor or IDE.
-
-![Open project in PyCharm - Step 1](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&step=pyCharm)
-
-Click on `Open` in PyCharm to browse to your generated SDK directory and then click `OK`.
-
-![Open project in PyCharm - Step 2](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&step=openProject0)
-
-The project files will be displayed in the side bar as follows:
-
-![Open project in PyCharm - Step 3](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&projectName=notion&step=openProject1)
-
-### 2. Add a new Test Project
-
-Create a new directory by right clicking on the solution name as shown below:
-
-![Add a new project in PyCharm - Step 1](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&projectName=notion&step=createDirectory)
-
-Name the directory as "test".
-
-![Add a new project in PyCharm - Step 2](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&step=nameDirectory)
-
-Add a python file to this project.
-
-![Add a new project in PyCharm - Step 3](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&projectName=notion&step=createFile)
-
-Name it "testSDK".
-
-![Add a new project in PyCharm - Step 4](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&projectName=notion&step=nameFile)
-
-In your python file you will be required to import the generated python library using the following code lines
-
-```python
-from notion.notion_client import NotionClient
+```bash
+pip install notion-api
 ```
 
-![Add a new project in PyCharm - Step 5](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&projectName=notion&libraryName=notion.notion_client&className=NotionClient&step=projectFiles)
-
-After this you can write code to instantiate an API client object, get a controller object and  make API calls. Sample code is given in the subsequent sections.
-
-### 3. Run the Test Project
-
-To run the file within your test project, right click on your Python file inside your Test project and click on `Run`
-
-![Run Test Project - Step 1](https://apidocs.io/illustration/python?workspaceFolder=Notion-Python&projectName=notion&libraryName=notion.notion_client&className=NotionClient&step=runProject)
-
-## Initialize the API Client
-
-**_Note:_** Documentation for the client can be found [here.](doc/client.md)
-
-The following parameters are configurable for the API Client:
-
-| Parameter | Type | Description |
-|  --- | --- | --- |
-| http_client_instance | `Union[Session, HttpClientProvider]` | The Http Client passed from the sdk user for making requests |
-| override_http_client_configuration | `bool` | The value which determines to override properties of the passed Http Client from the sdk user |
-| http_call_back | `HttpCallBack` | The callback value that is invoked before and after an HTTP call is made to an endpoint |
-| timeout | `float` | The value to use for connection timeout. <br> **Default: 30** |
-| max_retries | `int` | The number of times to retry an endpoint call if it fails. <br> **Default: 0** |
-| backoff_factor | `float` | A backoff factor to apply between attempts after the second try. <br> **Default: 2** |
-| retry_statuses | `Array of int` | The http statuses on which retry is to be done. <br> **Default: [408, 413, 429, 500, 502, 503, 504, 521, 522, 524, 408, 413, 429, 500, 502, 503, 504, 521, 522, 524]** |
-| retry_methods | `Array of string` | The http methods on which retry is to be done. <br> **Default: ["GET", "PUT", "GET", "PUT"]** |
-| proxy_settings | [`ProxySettings`](doc/proxy-settings.md) | Optional proxy configuration to route HTTP requests through a proxy server. |
-| logging_configuration | [`LoggingConfiguration`](doc/logging-configuration.md) | The SDK logging configuration for API calls |
-| bearer_auth_credentials | [`BearerAuthCredentials`](doc/auth/oauth-2-bearer-token.md) | The credential object for OAuth 2 Bearer token |
-
-The API client can be initialized as follows:
-
-### Code-Based Client Initialization
-
-```python
-import logging
-
-from notion.configuration import Environment
-from notion.http.auth.oauth_2 import BearerAuthCredentials
-from notion.logging.configuration.api_logging_configuration import LoggingConfiguration
-from notion.logging.configuration.api_logging_configuration import RequestLoggingConfiguration
-from notion.logging.configuration.api_logging_configuration import ResponseLoggingConfiguration
-from notion.notion_client import NotionClient
-
-client = NotionClient(
-    bearer_auth_credentials=BearerAuthCredentials(
-        access_token='AccessToken'
-    ),
-    environment=Environment.PRODUCTION,
-    logging_configuration=LoggingConfiguration(
-        log_level=logging.INFO,
-        request_logging_config=RequestLoggingConfiguration(
-            log_body=True
-        ),
-        response_logging_config=ResponseLoggingConfiguration(
-            log_headers=True
-        )
-    )
-)
+```bash
+uv add notion-api
 ```
 
-### Environment-Based Client Initialization
-
-```python
-from notion.notion_client import NotionClient
-
-# Specify the path to your .env file if it’s located outside the project’s root directory.
-client = NotionClient.from_environment(dotenv_path='/path/to/.env')
+```bash
+poetry add notion-api
 ```
 
-See the [Environment-Based Client Initialization](doc/environment-based-client-initialization.md) section for details.
+---
 
-## Authorization
+## Quick Start
 
-This API uses the following authentication schemes.
+### Synchronous client
 
-* [`bearerAuth (OAuth 2 Bearer token)`](doc/auth/oauth-2-bearer-token.md)
+Construct `NotionApiClient` with keyword arguments, and call `close()` when you are done. Every argument is optional; the full list is in the [SDK map](sdk-map.md).
 
-## List of APIs
+```python
+from notion_api import NotionApiClient
 
-* [Blocks](doc/controllers/blocks.md)
-* [Comments](doc/controllers/comments.md)
-* [Databases](doc/controllers/databases.md)
-* [Pages](doc/controllers/pages.md)
-* [Search](doc/controllers/search.md)
-* [Users](doc/controllers/users.md)
+client = NotionApiClient(bearer_auth="YOUR_BEARER_TOKEN")
 
-## SDK Infrastructure
+# TODO: call endpoints here -- see api-reference.md
 
-### Configuration
+client.close()
+```
 
-* [ProxySettings](doc/proxy-settings.md)
-* [Environment-Based Client Initialization](doc/environment-based-client-initialization.md)
-* [AbstractLogger](doc/abstract-logger.md)
-* [LoggingConfiguration](doc/logging-configuration.md)
-* [RequestLoggingConfiguration](doc/request-logging-configuration.md)
-* [ResponseLoggingConfiguration](doc/response-logging-configuration.md)
+Alternatively, scope it -- `with NotionApiClient(...) as client:` closes the pool on exit; see [Best Practices](#best-practices).
 
-### HTTP
+`Client` is exported as an alias of `NotionApiClient`, so `from notion_api import Client` also works.
 
-* [HttpResponse](doc/http-response.md)
-* [HttpRequest](doc/http-request.md)
+The SDK accepts every model-typed input in two interchangeable spellings, both type-checked: the typed model, or a plain dict with the same keys -- the `OrDict` and `Model | ModelDict` unions in the [SDK map](sdk-map.md). Pick whichever suits the call site: the dict form needs no import, while the model form adds a keyword-checked constructor and editor completion.
 
-### Utilities
+### Asynchronous client
 
-* [ApiResponse](doc/api-response.md)
-* [ApiHelper](doc/api-helper.md)
-* [HttpDateTime](doc/http-date-time.md)
-* [RFC3339DateTime](doc/rfc3339-date-time.md)
-* [UnixDateTime](doc/unix-date-time.md)
+`AsyncNotionApiClient` mirrors `NotionApiClient` with **identical method names**, and every endpoint method is a coroutine. It takes the same arguments, with some differences -- for example, the transport argument is `custom_async_http_client`.
 
+```python
+from asyncio import run
+
+from notion_api import AsyncNotionApiClient
+
+
+async def main() -> None:
+    client = AsyncNotionApiClient(bearer_auth="YOUR_BEARER_TOKEN")
+    # TODO: call endpoints here, awaiting each -- see api-reference.md
+    await client.aclose()
+
+
+run(main())
+```
+
+Alternatively, scope it -- `async with AsyncNotionApiClient(...) as client:` closes the pool on exit. Only the async spelling is `aclose`, matching httpx; see [Best Practices](#best-practices).
+
+`AsyncClient` is the exported alias. Each client accepts **only** its own transport argument; passing the other's is a `TypeError` at runtime and an error under mypy.
+
+---
+
+## Usage
+
+Two generated references cover the SDK; each answers a different question:
+
+| Reference | For |
+| --- | --- |
+| **[API Reference](api-reference.md)** | Usage guidance for a single **parsed** operation: `client.<group>.<operation>(...)` returns the typed payload and raises `ApiError` on any non-2xx, with `.error` the typed error body, or `RawError` for a status the operation does not document. |
+| **[Raw API Reference](raw-api-reference.md)** | The same for the **raw** variant: `client.<group>.with_raw_response.<operation>(...)` returns `ApiResult[T, E]` and never raises for an API error. |
+
+Both API references carry every one of the 5 operations, with a sync and an async sample and a parameter table each.
+
+## SDK map
+
+This SDK ships a generated **SDK map** -- [`sdk-map.md`](sdk-map.md) -- a deterministic, lookup-oriented table of contents of the SDK's Python surface, generated by APIMatic alongside this SDK.
+
+Consult the map before scanning or grepping the source: it answers call-level contract questions by lookup, and for anything it does not carry -- model shapes, enum values, an endpoint's route or behavioural prose -- it names the one source file to read. How to read the map itself, including the SDK-wide defaults its rows rely on, is stated at the top of [`sdk-map.md`](sdk-map.md).
+
+## Best Practices
+
+> [!TIP]
+> Use a **single `NotionApiClient` instance** for the lifetime of your application and reuse it across
+> all requests. Each instance owns its own connection pool, so an instance per request forfeits
+> connection reuse and leaks pools that are never closed.
+
+Match the disposal to the client's lifetime: an application-lifetime client is closed once at shutdown with `close()` / `aclose()`; where the lifetime fits a block, `with NotionApiClient() as client:` / `async with AsyncNotionApiClient() as client:` releases it automatically. Both are idempotent, but a closed client is not reusable: the next call raises. The client closes **whatever transport it holds**, including one you supplied via `custom_http_client` / `custom_async_http_client`; if you intend to reuse your own transport across clients, don't hand its lifetime to a `with` block.
+
+## License
+
+This SDK is distributed under the [MIT License][license-url].
+
+---
+
+## Support
+
+Refer to the [API reference](api-reference.md) for detailed information on available operations with code samples.
+
+For further assistance, please contact support at developers@makenotion.com.
+
+---
+
+[license-url]: LICENSE
+[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
+[apimatic-url]: https://www.apimatic.io
+[apimatic-badge]: https://www.apimatic.io/hubfs/Built-with-APIMatic-badge.svg
+[python-url]: https://www.python.org/downloads/
+[python-badge]: https://img.shields.io/badge/python-3.10%2B-blue.svg
