@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import Field
 from typing_extensions import NotRequired, TypedDict
@@ -12,7 +12,7 @@ class PaginatedList(SdkBaseModel):
     """A paginated list of results returned by list and query endpoints. All paginated responses follow the same
     structure with a results array, pagination info, and object type."""
 
-    object_: Literal["list"] = Field(default="list", alias="object")
+    object_: Any = Field(alias="object")
     """Always "list" for paginated responses."""
 
     results: list[Any]
@@ -32,7 +32,7 @@ class PaginatedList(SdkBaseModel):
 
 
 class PaginatedListDict(TypedDict):
-    object_: NotRequired[Literal["list"]]
+    object_: Any
     results: list[Any]
     next_cursor: str | None
     has_more: bool

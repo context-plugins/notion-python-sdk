@@ -28,7 +28,22 @@ Creates and appends new children blocks to the parent block specified by block_i
 **Sync**
 
 ```python
-result = client.with_raw_response.append_block_children(block_id, body)
+result = client.with_raw_response.append_block_children(
+    UUID("00000000-0000-0000-0000-000000000000"),
+    BlocksChildrenRequest(
+        children=[
+            Block(
+                object_=Object1.BLOCK,
+                id=UUID("00000000-0000-0000-0000-000000000000"),
+                type_=Type1.PARAGRAPH,
+                created_time=datetime(2024, 1, 15, 9, 30, 0, tzinfo=timezone.utc),
+                last_edited_time=datetime(2024, 1, 15, 9, 30, 0, tzinfo=timezone.utc),
+                has_children=True,
+            ),
+        ],
+    ),
+    notion_version="2022-06-28",
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type PaginatedList
@@ -39,7 +54,22 @@ match result:
 **Async**
 
 ```python
-result = await async_client.with_raw_response.append_block_children(block_id, body)
+result = await async_client.with_raw_response.append_block_children(
+    UUID("00000000-0000-0000-0000-000000000000"),
+    BlocksChildrenRequest(
+        children=[
+            Block(
+                object_=Object1.BLOCK,
+                id=UUID("00000000-0000-0000-0000-000000000000"),
+                type_=Type1.PARAGRAPH,
+                created_time=datetime(2024, 1, 15, 9, 30, 0, tzinfo=timezone.utc),
+                last_edited_time=datetime(2024, 1, 15, 9, 30, 0, tzinfo=timezone.utc),
+                has_children=True,
+            ),
+        ],
+    ),
+    notion_version="2022-06-28",
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type PaginatedList
@@ -60,7 +90,7 @@ match result:
 | <code>block_id</code> | <code>UUID</code> | The ID of the block to append children to. This can be a page ID to add content to a page. |
 | <code>body</code> | <code>[BlocksChildrenRequest](notion_api/models/blocks_children_request.py) \| [BlocksChildrenRequestDict](notion_api/models/blocks_children_request.py)</code> | The request body. |
 | <code>notion_version</code> | <code>str</code> | The version of the Notion API to use. The current version is 2022-06-28. This header is required for all API requests.<br>**Default**: <code>"2022-06-28"</code> |
-| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout or extra headers. |
+| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout, extra headers, or its retry count and statuses. |
 
 </dd>
 </dl>
@@ -115,7 +145,9 @@ Sets a Block object, including page blocks, to archived: true using the ID speci
 **Sync**
 
 ```python
-result = client.with_raw_response.delete_block(block_id)
+result = client.with_raw_response.delete_block(
+    UUID("00000000-0000-0000-0000-000000000000"), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type Block
@@ -126,7 +158,9 @@ match result:
 **Async**
 
 ```python
-result = await async_client.with_raw_response.delete_block(block_id)
+result = await async_client.with_raw_response.delete_block(
+    UUID("00000000-0000-0000-0000-000000000000"), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type Block
@@ -146,7 +180,7 @@ match result:
 | --- | --- | --- |
 | <code>block_id</code> | <code>UUID</code> | The ID of the block to delete (archive). |
 | <code>notion_version</code> | <code>str</code> | The version of the Notion API to use. The current version is 2022-06-28. This header is required for all API requests.<br>**Default**: <code>"2022-06-28"</code> |
-| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout or extra headers. |
+| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout, extra headers, or its retry count and statuses. |
 
 </dd>
 </dl>
@@ -201,7 +235,9 @@ Retrieves a Block object using the ID specified in the path. If the block is a p
 **Sync**
 
 ```python
-result = client.with_raw_response.retrieve_block(block_id)
+result = client.with_raw_response.retrieve_block(
+    UUID("00000000-0000-0000-0000-000000000000"), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type Block
@@ -212,7 +248,9 @@ match result:
 **Async**
 
 ```python
-result = await async_client.with_raw_response.retrieve_block(block_id)
+result = await async_client.with_raw_response.retrieve_block(
+    UUID("00000000-0000-0000-0000-000000000000"), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type Block
@@ -232,7 +270,7 @@ match result:
 | --- | --- | --- |
 | <code>block_id</code> | <code>UUID</code> | The ID of the block to retrieve. |
 | <code>notion_version</code> | <code>str</code> | The version of the Notion API to use. The current version is 2022-06-28. This header is required for all API requests.<br>**Default**: <code>"2022-06-28"</code> |
-| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout or extra headers. |
+| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout, extra headers, or its retry count and statuses. |
 
 </dd>
 </dl>
@@ -287,7 +325,9 @@ Returns a paginated array of child block objects contained in the block using th
 **Sync**
 
 ```python
-result = client.with_raw_response.retrieve_block_children(block_id)
+result = client.with_raw_response.retrieve_block_children(
+    UUID("00000000-0000-0000-0000-000000000000"), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type PaginatedList
@@ -298,7 +338,9 @@ match result:
 **Async**
 
 ```python
-result = await async_client.with_raw_response.retrieve_block_children(block_id)
+result = await async_client.with_raw_response.retrieve_block_children(
+    UUID("00000000-0000-0000-0000-000000000000"), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type PaginatedList
@@ -320,7 +362,7 @@ match result:
 | <code>start_cursor</code> | <code>str \| None</code> | Pagination cursor to continue fetching results.<br>**Default**: <code>None</code> |
 | <code>page_size</code> | <code>int \| None</code> | Maximum number of blocks to return (max 100).<br>**Default**: <code>None</code> |
 | <code>notion_version</code> | <code>str</code> | The version of the Notion API to use. The current version is 2022-06-28. This header is required for all API requests.<br>**Default**: <code>"2022-06-28"</code> |
-| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout or extra headers. |
+| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout, extra headers, or its retry count and statuses. |
 
 </dd>
 </dl>
@@ -375,7 +417,9 @@ Updates the content of a block. The fields that can be updated depend on the blo
 **Sync**
 
 ```python
-result = client.with_raw_response.update_block(block_id, body)
+result = client.with_raw_response.update_block(
+    UUID("00000000-0000-0000-0000-000000000000"), BlocksRequest(), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type Block
@@ -386,7 +430,9 @@ match result:
 **Async**
 
 ```python
-result = await async_client.with_raw_response.update_block(block_id, body)
+result = await async_client.with_raw_response.update_block(
+    UUID("00000000-0000-0000-0000-000000000000"), BlocksRequest(), notion_version="2022-06-28"
+)
 match result:
     case Success(payload=payload):
         ...  # TODO: Handle 'payload' of type Block
@@ -407,7 +453,7 @@ match result:
 | <code>block_id</code> | <code>UUID</code> | The ID of the block to update. |
 | <code>body</code> | <code>[BlocksRequest](notion_api/models/blocks_request.py) \| [BlocksRequestDict](notion_api/models/blocks_request.py)</code> | The request body. |
 | <code>notion_version</code> | <code>str</code> | The version of the Notion API to use. The current version is 2022-06-28. This header is required for all API requests.<br>**Default**: <code>"2022-06-28"</code> |
-| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout or extra headers. |
+| <code>request_options</code> | <code>[RequestOptionsOrDict](notion_api/core/request_options.py) \| None</code> | Per-call overrides for this one request, such as a timeout, extra headers, or its retry count and statuses. |
 
 </dd>
 </dl>

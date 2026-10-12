@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import Field
 from typing_extensions import NotRequired, TypedDict
 
 from ..core import UNSET, Optional, SdkBaseModel
+from .enums.object3 import Object3OrStr
 
 
 class ErrorError(SdkBaseModel):
     """An error response from the Notion API."""
 
-    object_: Literal["error"] = Field(default="error", alias="object")
+    object_: Object3OrStr = Field(alias="object")
     """Always "error" for error responses."""
 
     status: int
@@ -30,7 +29,7 @@ class ErrorError(SdkBaseModel):
 
 
 class ErrorErrorDict(TypedDict):
-    object_: NotRequired[Literal["error"]]
+    object_: Object3OrStr
     status: int
     code: str
     message: str

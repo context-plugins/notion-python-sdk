@@ -14,14 +14,16 @@ from .core import (
     ApiResult,
     BearerAuthScheme,
     HttpClient,
-    HttpxClient,
+    Httpx2Client,
     RawClient,
     RequestOptionsOrDict,
+    RetryOptionsOrDict,
     SecuredRawResponse,
     json_body,
     json_decoder,
     no_auth,
     param,
+    unwrap,
 )
 from .errors.append_block_children_error import AppendBlockChildrenErrorBody, append_block_children_error_mapper
 from .errors.delete_block_error import DeleteBlockErrorBody, delete_block_error_mapper
@@ -41,12 +43,14 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
         *,
         base_url: str | None = None,
         timeout: float = DEFAULT_TIMEOUT,
+        retry_options: int | RetryOptionsOrDict | None = None,
         custom_http_client: HttpClient | None = None,
         bearer_auth: str | None = None,
     ) -> None:
-        super().__init__(base_url=base_url, timeout=timeout)
+        super().__init__(base_url=base_url, timeout=timeout, retry_options=retry_options)
         self._raw_client = RawClient(
-            http_client=custom_http_client if custom_http_client is not None else HttpxClient(timeout=timeout),
+            http_client=custom_http_client if custom_http_client is not None else Httpx2Client(timeout=timeout),
+            retry_options=self._retry_options,
             global_headers=[
                 param[str]("User-Agent", "NotionApiClient/0.1.0 Python"),
                 param[str]("X-APIMatic-Lang", "Python"),
@@ -79,7 +83,8 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
             body: The request body.
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             Block children successfully appended.
@@ -89,9 +94,11 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
                 lacks access. The requested resource does not exist or the integration lacks access to it. The request
                 has been rate limited. Notion enforces rate limits of 3 requests per second for integrations. Retry
                 after the specified delay. ``error`` is ``Error | RawError``."""
-        return self.with_raw_response.append_block_children(
-            block_id, body, notion_version=notion_version, request_options=request_options
-        ).unwrap()
+        return unwrap(
+            self.with_raw_response.append_block_children(
+                block_id, body, notion_version=notion_version, request_options=request_options
+            ),
+        )
 
     def delete_block(
         self, block_id: UUID, *, notion_version: str = "2022-06-28", request_options: RequestOptionsOrDict | None = None
@@ -104,7 +111,8 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
             block_id: The ID of the block to delete (archive).
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             Block successfully deleted (archived).
@@ -114,9 +122,11 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
                 not exist or the integration lacks access to it. The request has been rate limited. Notion enforces rate
                 limits of 3 requests per second for integrations. Retry after the specified delay. ``error`` is ``Error
                 | RawError``."""
-        return self.with_raw_response.delete_block(
-            block_id, notion_version=notion_version, request_options=request_options
-        ).unwrap()
+        return unwrap(
+            self.with_raw_response.delete_block(
+                block_id, notion_version=notion_version, request_options=request_options
+            ),
+        )
 
     def retrieve_block(
         self, block_id: UUID, *, notion_version: str = "2022-06-28", request_options: RequestOptionsOrDict | None = None
@@ -128,7 +138,8 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
             block_id: The ID of the block to retrieve.
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             Block successfully retrieved.
@@ -138,9 +149,11 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
                 not exist or the integration lacks access to it. The request has been rate limited. Notion enforces rate
                 limits of 3 requests per second for integrations. Retry after the specified delay. ``error`` is ``Error
                 | RawError``."""
-        return self.with_raw_response.retrieve_block(
-            block_id, notion_version=notion_version, request_options=request_options
-        ).unwrap()
+        return unwrap(
+            self.with_raw_response.retrieve_block(
+                block_id, notion_version=notion_version, request_options=request_options
+            ),
+        )
 
     def retrieve_block_children(
         self,
@@ -161,7 +174,8 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
             page_size: Maximum number of blocks to return (max 100).
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             Block children successfully retrieved.
@@ -171,13 +185,15 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
                 not exist or the integration lacks access to it. The request has been rate limited. Notion enforces rate
                 limits of 3 requests per second for integrations. Retry after the specified delay. ``error`` is ``Error
                 | RawError``."""
-        return self.with_raw_response.retrieve_block_children(
-            block_id,
-            start_cursor=start_cursor,
-            page_size=page_size,
-            notion_version=notion_version,
-            request_options=request_options,
-        ).unwrap()
+        return unwrap(
+            self.with_raw_response.retrieve_block_children(
+                block_id,
+                start_cursor=start_cursor,
+                page_size=page_size,
+                notion_version=notion_version,
+                request_options=request_options,
+            ),
+        )
 
     def update_block(
         self,
@@ -195,7 +211,8 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
             body: The request body.
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             Block successfully updated.
@@ -205,9 +222,11 @@ class NotionApiClient(BaseNotionApiClient[RawClient]):
                 lacks access. The requested resource does not exist or the integration lacks access to it. The request
                 has been rate limited. Notion enforces rate limits of 3 requests per second for integrations. Retry
                 after the specified delay. ``error`` is ``Error | RawError``."""
-        return self.with_raw_response.update_block(
-            block_id, body, notion_version=notion_version, request_options=request_options
-        ).unwrap()
+        return unwrap(
+            self.with_raw_response.update_block(
+                block_id, body, notion_version=notion_version, request_options=request_options
+            ),
+        )
 
     def close(self) -> None:
         self._raw_client.http_client.close()
@@ -239,7 +258,8 @@ class ApiWithRawResponse(SecuredRawResponse[RawClient, Server, AuthSchemes]):
             body: The request body.
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             An ``ApiResult`` holding the deserialized response or the error body."""
@@ -266,7 +286,8 @@ class ApiWithRawResponse(SecuredRawResponse[RawClient, Server, AuthSchemes]):
             block_id: The ID of the block to delete (archive).
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             An ``ApiResult`` holding the deserialized response or the error body."""
@@ -291,7 +312,8 @@ class ApiWithRawResponse(SecuredRawResponse[RawClient, Server, AuthSchemes]):
             block_id: The ID of the block to retrieve.
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             An ``ApiResult`` holding the deserialized response or the error body."""
@@ -325,7 +347,8 @@ class ApiWithRawResponse(SecuredRawResponse[RawClient, Server, AuthSchemes]):
             page_size: Maximum number of blocks to return (max 100).
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             An ``ApiResult`` holding the deserialized response or the error body."""
@@ -357,7 +380,8 @@ class ApiWithRawResponse(SecuredRawResponse[RawClient, Server, AuthSchemes]):
             body: The request body.
             notion_version: The version of the Notion API to use. The current version is 2022-06-28. This header is
                 required for all API requests.
-            request_options: Per-call overrides for this one request, such as a timeout or extra headers.
+            request_options: Per-call overrides for this one request, such as a timeout, extra headers, or its retry
+                count and statuses.
 
         Returns:
             An ``ApiResult`` holding the deserialized response or the error body."""

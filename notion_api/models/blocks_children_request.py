@@ -17,5 +17,5 @@ class BlocksChildrenRequest(SdkBaseModel):
 
 
 class BlocksChildrenRequestDict(TypedDict):
-    children: list[Block | BlockDict]
+    children: list[BlockDict]
     after: NotRequired[UUID]

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Literal
 from uuid import UUID
 
 from pydantic import Field
 from typing_extensions import NotRequired, TypedDict
 
 from ..core import UNSET, Optional, RFC3339DateTime, SdkBaseModel
+from .enums.object1 import Object1OrStr
 from .enums.type1 import Type1OrStr
 from .parent import Parent, ParentDict
 from .partial_user import PartialUser, PartialUserDict
@@ -17,7 +17,7 @@ class Block(SdkBaseModel):
     content and can be of many types including paragraphs, headings, lists, images, code, tables, and more. Blocks can
     contain other blocks as children, forming a tree structure."""
 
-    object_: Literal["block"] = Field(default="block", alias="object")
+    object_: Object1OrStr = Field(alias="object")
     """Always "block" for block objects."""
 
     id: UUID
@@ -55,14 +55,14 @@ class Block(SdkBaseModel):
 
 
 class BlockDict(TypedDict):
-    object_: NotRequired[Literal["block"]]
+    object_: Object1OrStr
     id: UUID
-    parent: NotRequired[Parent | ParentDict]
+    parent: NotRequired[ParentDict]
     type_: Type1OrStr
     created_time: RFC3339DateTime
     last_edited_time: RFC3339DateTime
-    created_by: NotRequired[PartialUser | PartialUserDict]
-    last_edited_by: NotRequired[PartialUser | PartialUserDict]
+    created_by: NotRequired[PartialUserDict]
+    last_edited_by: NotRequired[PartialUserDict]
     archived: NotRequired[bool]
     in_trash: NotRequired[bool]
     has_children: bool

@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from typing import Literal
 from uuid import UUID
 
 from pydantic import Field
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 
 from ..core import SdkBaseModel
+from .enums.object2 import Object2OrStr
 
 
 class PartialUser(SdkBaseModel):
     """A partial User object containing only the object type and ID. Used in created_by and last_edited_by fields."""
 
-    object_: Literal["user"] = Field(default="user", alias="object")
+    object_: Object2OrStr = Field(alias="object")
     """Always "user"."""
 
     id: UUID
@@ -20,5 +20,5 @@ class PartialUser(SdkBaseModel):
 
 
 class PartialUserDict(TypedDict):
-    object_: NotRequired[Literal["user"]]
+    object_: Object2OrStr
     id: UUID
